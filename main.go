@@ -51,8 +51,9 @@ func main() {
 	var help bool
 
 	config := tts.TTSConf{}
-	flag.StringVar(&config.WorkDir, "w", "", "msc_work_dir工作目录")
-	flag.StringVar(&config.AppId, "k", "", "appid")
+	loginConf := tts.TTSLoginConf{}
+	flag.StringVar(&loginConf.WorkDir, "w", "", "msc_work_dir工作目录")
+	flag.StringVar(&loginConf.AppId, "k", "", "appid")
 	flag.StringVar(&text, "t", "测试文本", "需要转换的文案")
 	flag.StringVar(&file, "o", "test.wav", "转换后生成的文件名")
 	flag.StringVar(&config.EngineType, "e", "local", "引擎")
@@ -73,19 +74,24 @@ func main() {
 		return
 	}
 
-	log.Debug(config.WorkDir)
+	log.Debug(loginConf.WorkDir)
 
-	if len(config.AppId) == 0 || len(config.WorkDir) == 0 || len(file) == 0 {
+	if len(loginConf.AppId) == 0 || len(loginConf.WorkDir) == 0 || len(file) == 0 {
 		log.Debug("appid / work_dir / file 没有输入内容")
 		return
 	}
 
 	log.Debug("开始合成资源")
 	t := time.Now()
-
-	if err := tts.GetTTSWavFile(config.ToTTSParams(), config.ToTTSLoginParams(), text, file); err != nil {
-		panic("转换失败")
+	if err := tts.Login(loginConf.ToTTSLoginParams()); err != nil {
 		log.Error("%v", err)
+		panic("登录失败")
+		return
+	}
+
+	if err := tts.GetTTSWavFile(config.ToTTSParams(), text, file); err != nil {
+		log.Error("%v", err)
+		panic("转换失败")
 		return
 	}
 	log.Debug("转换成功 耗时 %d", time.Since(t).Milliseconds())

@@ -7,9 +7,12 @@ import (
 	"tts-go/audio"
 )
 
+type TTSLoginConf struct {
+	WorkDir string `json:"work_dir"`
+	AppId   string `json:"appid"`
+}
+
 type TTSConf struct {
-	WorkDir      string `json:"work_dir"`
-	AppId        string `json:"appid"`
 	EngineType   string `json:"engine_type"`
 	VoiceName    string `json:"voice_name"`
 	TextEncoding string `json:"text_encoding"`
@@ -36,15 +39,15 @@ func (ttsConf TTSConf) ToTTSParams() string {
 		ttsConf.Rcn)
 }
 
-func (ttsConf TTSConf) ToTTSLoginParams() string {
+func (ttsLoginConf TTSLoginConf) ToTTSLoginParams() string {
 	return fmt.Sprintf("appid = %s, work_dir = %s",
-		ttsConf.AppId,
-		ttsConf.WorkDir)
+		ttsLoginConf.AppId,
+		ttsLoginConf.WorkDir)
 }
 
 // 生成wav文件
-func GetTTSWavFile(ttsParmas, loginParams, speedTxt, desPath string) error {
-	audioData, err := TTSData(ttsParmas, loginParams, speedTxt)
+func GetTTSWavFile(ttsParmas, speedTxt, desPath string) error {
+	audioData, err := TTSData(ttsParmas, speedTxt)
 	if err != nil {
 		return err
 	}
@@ -60,14 +63,18 @@ func GetTTSWavFile(ttsParmas, loginParams, speedTxt, desPath string) error {
 	return nil
 }
 
+func Login(loginParams string) error {
+	return MSPLogin(loginParams)
+}
+
+func Logout(loginParams string) error {
+	return MSPLogout()
+}
+
 // 获取语音的二进制数据
-func TTSData(ttsParmas, loginParams, speedTxt string) ([]byte, error) {
+func TTSData(ttsParmas, speedTxt string) ([]byte, error) {
 	if speedTxt == "" {
 		return audio.NewWAV().Data(), nil
-	}
-
-	if err := MSPLogin(loginParams); err != nil {
-		return nil, err
 	}
 	/* 开始合成 */
 	sessionID, err := QTTSSessionBegin(ttsParmas)
@@ -78,7 +85,6 @@ func TTSData(ttsParmas, loginParams, speedTxt string) ([]byte, error) {
 	if err = QTTSTextPut(sessionID, speedTxt, ""); err != nil {
 		return nil, err
 	}
-	fmt.Print("正在合成 ...\n")
 	audioData := audio.NewWAV()
 	for true {
 		data, synthStatus, err := QTTSAudioGet(sessionID)
