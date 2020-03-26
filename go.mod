@@ -1,4 +1,4 @@
-module tts-go
+module github.com/rayboot/tts-go
 
 go 1.13
 
