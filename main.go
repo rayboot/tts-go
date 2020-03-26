@@ -16,11 +16,12 @@ Usage: tts-go [options]
 ─res
    ├─msc_work_dir
    │  └─msc
-   │      └─msc.cfg
+   │      └─msc.cfg (如果不想产生日志，可以把这个文件删掉)
    └─tts
       └─common.jet
       └─xiaofeng.jet
       └─xiaoyan.jet
+
 讯飞参数中work_dir 设置为msc_work_dir的绝对路径
 资源引用使用  ../../tts/***.jet
 
