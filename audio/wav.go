@@ -2,10 +2,10 @@ package audio
 
 import (
 	"encoding/binary"
+	"github.com/rayboot/tts-go/audio/errors"
 	"io"
 	"io/ioutil"
 	"math"
-	"tts-go/audio/errors"
 )
 
 // WAV-related constants.

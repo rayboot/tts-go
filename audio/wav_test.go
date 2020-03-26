@@ -3,6 +3,9 @@ package audio_test
 import (
 	"bytes"
 	"encoding/binary"
+	"github.com/rayboot/tts-go/audio"
+	"github.com/rayboot/tts-go/audio/errors"
+	"github.com/rayboot/tts-go/audio/testutils"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
