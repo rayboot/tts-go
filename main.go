@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/dyike/log"
+	"github.com/rayboot/tts-go/tts"
 	"os"
 	"time"
-	"tts-go/tts"
 )
 
 var usageStr = `
