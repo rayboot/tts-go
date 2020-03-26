@@ -3,8 +3,8 @@ package tts
 import "C"
 import (
 	"fmt"
+	"github.com/rayboot/tts-go/audio"
 	"os"
-	"tts-go/audio"
 )
 
 type TTSLoginConf struct {
