@@ -56,7 +56,7 @@ support windows and linux
 
 ```
 
-tts-go.exe -w C:\\Users\\admin\\go\\src\\tts-go\\tts\\res\\msc_work_dir -k your_appid -t 测试一下
+tts-go.exe -w C:\\Users\\admin\\go\\src\\tts-go\\res\\msc_work_dir\\ -k your_appid -t 测试一下
 
 tts-go -w /path/to/msc_work_dir -k your_appid -t 测试一下
 
