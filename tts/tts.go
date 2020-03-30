@@ -67,7 +67,7 @@ func Login(loginParams string) error {
 	return MSPLogin(loginParams)
 }
 
-func Logout(loginParams string) error {
+func Logout() error {
 	return MSPLogout()
 }
 
