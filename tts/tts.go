@@ -26,7 +26,7 @@ type TTSConf struct {
 }
 
 func (ttsConf TTSConf) ToTTSParams() string {
-	return fmt.Sprintf("engine_type = %s, voice_name = %s, text_encoding = %s, tts_res_path = %s, sample_rate= %d, speed = %d, volume = %d, pitch = %d, rdn = %d, rcn = %d",
+	return fmt.Sprintf("engine_type = %s, voice_name = %s, text_encoding = %s, tts_res_path = %s, sample_rate = %d, speed = %d, volume = %d, pitch = %d, rdn = %d, rcn = %d",
 		ttsConf.EngineType,
 		ttsConf.VoiceName,
 		ttsConf.TextEncoding,
@@ -47,7 +47,7 @@ func (ttsLoginConf TTSLoginConf) ToTTSLoginParams() string {
 
 // 生成wav文件
 func GetTTSWavFile(ttsParmas, speedTxt, desPath string) error {
-	audioData, err := TTSData(ttsParmas, speedTxt)
+	audioData, err := TTSWavData(ttsParmas, speedTxt)
 	if err != nil {
 		return err
 	}
@@ -72,9 +72,20 @@ func Logout() error {
 }
 
 // 获取语音的二进制数据
+func TTSWavData(ttsParmas, speedTxt string) ([]byte, error) {
+	audioData := audio.NewWAV()
+	data, err := TTSData(ttsParmas, speedTxt)
+	if err != nil {
+		return nil, err
+	}
+	audioData.AddAudioData(data)
+	return audioData.Data(), nil
+}
+
 func TTSData(ttsParmas, speedTxt string) ([]byte, error) {
+	ttsData := make([]byte, 0)
 	if speedTxt == "" {
-		return audio.NewWAV().Data(), nil
+		return ttsData, nil
 	}
 	/* 开始合成 */
 	sessionID, err := QTTSSessionBegin(ttsParmas)
@@ -85,18 +96,17 @@ func TTSData(ttsParmas, speedTxt string) ([]byte, error) {
 	if err = QTTSTextPut(sessionID, speedTxt, ""); err != nil {
 		return nil, err
 	}
-	audioData := audio.NewWAV()
 	for true {
 		data, synthStatus, err := QTTSAudioGet(sessionID)
 		if err != nil {
 			return nil, err
 		}
 		if data != nil {
-			audioData.AddAudioData(data)
+			ttsData = append(ttsData, data...)
 		}
 		if synthStatus == 2 {
 			break
 		}
 	}
-	return audioData.Data(), nil
+	return ttsData, nil
 }
